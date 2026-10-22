@@ -66,3 +66,41 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+
+# ==========================================
+# Vivado Project & Run Artifacts
+# ==========================================
+.Xil/
+*.jou
+*.log
+*.pb
+*.str
+*.rqs
+*.mif
+*.ip_user_files/
+
+# Vivado Simulator (xsim) Output
+xsim.dir/
+xsim.jou
+xsim.log
+xelab.pb
+xvlog.pb
+xvhdl.pb
+*.wdb
+*.wcfg
+
+# Vivado Generated Run Folders
+*.runs/
+*.sim/
+*.hw/
+*.gen/
+*.cache/
+
+# Waveforms & Simulation Dumps
+*.vcd
+*.fst
+*.ghw
+
+# Keep sim directory structure tracked
+sim/*
+!sim/.gitkeep
