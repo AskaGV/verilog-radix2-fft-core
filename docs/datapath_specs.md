@@ -1,4 +1,4 @@
-# Phase 2 Engineering Spec: Datapath Architecture & In-Place Memory Addressing
+# Datapath Architecture & In-Place Memory Addressing
 
 This document specifies the hardware datapath layout, memory topology, pipeline timing, and memory address generation formulas for the Radix-2 16-bit Q2.14 FFT core.
 
@@ -7,26 +7,6 @@ This document specifies the hardware datapath layout, memory topology, pipeline 
 ## 1. Top-Level Datapath Architecture
 
 The datapath follows an **In-Place Architecture** where intermediate and final butterfly calculations overwrite the input data in a single Dual-Port Block RAM.
-
-┌────────────────────────┐
-                                  │   Twiddle Factor ROM   │
-                                  │ (Sine/Cosine Lookups)  │
-                                  └───────────┬────────────┘
-                                              │ Twiddle (W)
-                                              ▼
-
-                                              ┌──────────────┐     Data A     ┌──────────────────────────────┐     Out A'     ┌──────────────┐
-│              ├───────────────►│                              ├───────────────►│              │
-│  Dual-Port   │                │     Butterfly Processing     │                │  Dual-Port   │
-│  Block RAM   │                │            Element           │                │  Block RAM   │
-│ (Data Buffer)│     Data B     │  (1 Complex Mult + 2 Adders) │     Out B'     │ (Data Buffer)│
-│              ├───────────────►│                              ├───────────────►│              │
-└──────┬───────┘                └──────────────────────────────┘                └──────▲───────┘
-│                                                                               │
-└─────────────────────────────────── Read/Write ────────────────────────────────┘
-In-Place Memory
-
----
 
 ## 2. Core Datapath Modules
 
@@ -71,15 +51,3 @@ For an $N$-point FFT at Stage $S \in [0, \log_2 N - 1]$ and Pass $P \in [0, \fra
 | **Stage 1** | $2$ | $(0,2),\ (1,3),\ (4,6),\ (5,7)$ | $0,\ 1,\ 0,\ 1$ |
 | **Stage 2** | $4$ | $(0,4),\ (1,5),\ (2,6),\ (3,7)$ | $0,\ 1,\ 2,\ 3$ |
 
----
-
-## 4. Pipeline Execution & Memory Timing Alignment
-
-Because complex multiplication inside the Butterfly unit contains internal registers, execution incurs a **3-clock cycle pipeline latency**:
-
-Clock Cycle:   |  N  | N+1 | N+2 | N+3 | N+4 |
----------------+-----+-----+-----+-----+-----+
-RAM Read:      | R(A,B) ...
-Mult Stage:          | P = B*W ...
-Add/Scale:                 | A', B' Calculated ...
-RAM Write:                       | W(A',B') ...
